@@ -1,5 +1,21 @@
 "use client";
+import styled from "styled-components";
+import Nav from "../../components/Nav";
 
+const StyledWrapper = styled.div`
+    font-family: "Arial, Helvetica, sans-serif";
+`;
+
+const StyledHeader = styled.header`
+    font-size: calc(20px + 1.5vw);
+    text-align: center;
+    padding-top: 1%;
+`;
+
+const StyledMain = styled.main`
+    padding: 2%;
+    padding-top: 0;
+`;
 import { useEffect, useState, useMemo } from "react";
 import TaskPreview from "@/components/TaskPreview";
 import { TaskProps } from "@/types";
@@ -40,27 +56,29 @@ export default function TasksPage() {
     }, [tasks, category]);
 
     return (
-        <div style={{ padding: "2rem" }}>
-            <h1>All Tasks</h1>
+        <StyledWrapper>
+            <Nav/>
+            <StyledHeader>Tasks</StyledHeader>
+            <StyledMain>
+                <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                >
+                    {categories.map((cat, i) => (
+                        <option key={i} value={cat}>
+                            {cat}
+                        </option>
+                    ))}
+                </select>
 
-            <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-            >
-                {categories.map((cat, i) => (
-                    <option key={i} value={cat}>
-                        {cat}
-                    </option>
-                ))}
-            </select>
-
-            {filteredTasks.length === 0 ? (
-                <p>No tasks found.</p>
-            ) : (
-                filteredTasks.map(task => (
-                    <TaskPreview key={task._id} task={task} />
-                ))
-            )}
-        </div>
+                {filteredTasks.length === 0 ? (
+                    <p>No tasks found.</p>
+                ) : (
+                    filteredTasks.map(task => (
+                        <TaskPreview key={task._id} task={task} />
+                    ))
+                )}
+            </StyledMain>
+        </StyledWrapper>
     );
 }

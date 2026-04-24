@@ -1,8 +1,8 @@
 import TaskPreview from "@/components/TaskPreview";
 import { TaskProps } from "@/types";
 import clientPromise from "@/lib/mongodb";
-import Link from "next/link";
 import TaskForm from "@/components/TaskForm";
+import Nav from "../components/Nav";
 
 export default async function HomePage() {
   const client = await clientPromise;
@@ -40,8 +40,12 @@ export default async function HomePage() {
   });
 
   return (
-      <div style={{ padding: "2rem" }}>
+      <div>
+        <Nav/>
+          <TaskForm />
+          <h1>Today’s Tasks</h1>
 
+<<<<<<< HEAD
         <nav style={{
           display: "flex",
           gap: "1rem",
@@ -65,6 +69,15 @@ export default async function HomePage() {
                 <TaskPreview key={task._id} task={task} />
             ))
         )}
+=======
+          {todaysTasks.length === 0 ? (
+              <p>No tasks for today.</p>
+          ) : (
+              todaysTasks.map((task) => (
+                  <TaskPreview key={task._id} task={task} />
+              ))
+          )}
+>>>>>>> 1d47f27 (Updates)
       </div>
   );
 }
