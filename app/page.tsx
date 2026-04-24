@@ -45,31 +45,6 @@ export default async function HomePage() {
           <TaskForm />
           <h1>Today’s Tasks</h1>
 
-<<<<<<< HEAD
-        <nav style={{
-          display: "flex",
-          gap: "1rem",
-          marginBottom: "2rem",
-          padding: "1rem",
-          background: "#eee",
-          borderRadius: "8px"
-        }}>
-          <Link href="/">Home</Link>
-          <Link href="/tasks">Tasks</Link>
-          <Link href="/calendar">Calendar</Link>
-        </nav>
-
-        <TaskForm />
-        <h1>Today’s Tasks</h1>
-
-        {todaysTasks.length === 0 ? (
-            <p>No tasks for today.</p>
-        ) : (
-            todaysTasks.map((task) => (
-                <TaskPreview key={task._id} task={task} />
-            ))
-        )}
-=======
           {todaysTasks.length === 0 ? (
               <p>No tasks for today.</p>
           ) : (
@@ -77,7 +52,6 @@ export default async function HomePage() {
                   <TaskPreview key={task._id} task={task} />
               ))
           )}
->>>>>>> 1d47f27 (Updates)
       </div>
   );
 }
