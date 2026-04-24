@@ -24,7 +24,7 @@ export default function TaskPreview({ task} : {task: TaskProps}) {
             <h2 id="TaskTitle">{task.title}</h2>
             <h4 id="TaskCategory">{task.category}</h4>
             <h5 id="TaskDescription">{task.description}</h5>
-            <h4 id="TaskDueDate">{task.deadline}</h4>
+            <h4 id="TaskDueDate">{new Date(task.deadline). toLocaleDateString()}</h4>
         </StyledMain>
     );
 }
