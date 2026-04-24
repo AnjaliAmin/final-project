@@ -42,7 +42,6 @@ export default async function HomePage() {
   return (
       <div style={{ padding: "2rem" }}>
 
-        {/* 🧭 NAVIGATION */}
         <nav style={{
           display: "flex",
           gap: "1rem",
