@@ -8,28 +8,47 @@ export default function TaskForm() {
     const [category, setCategory] = useState("");
     const [deadline, setDeadline] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
+        console.log("FORM SUBMITTED");
 
-        await fetch("/api/tasks", {
+        if (!title.trim() || !deadline) {
+            alert("Title and deadline are required");
+            return;
+        }
+
+        console.log({
+            title,
+            description,
+            category,
+            deadline,
+        });
+
+        const res = await fetch("/api/tasks", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                title,
-                description,
-                category,
-                deadline
+                title: title.trim(),
+                description: description.trim(),
+                category: category.trim(),
+                deadline,
+                completed: false
             })
         });
+
+        if (!res.ok) {
+            alert("Failed to create task");
+            return;
+        }
 
         setTitle("");
         setDescription("");
         setCategory("");
         setDeadline("");
 
-        window.location.reload(); // simple refresh (we can improve later)
+        window.location.reload();
     };
 
     return (
@@ -37,7 +56,7 @@ export default function TaskForm() {
             <h2>Create Task</h2>
 
             <input
-                placeholder="Title"
+                placeholder="Title (required)"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
             />
@@ -49,7 +68,7 @@ export default function TaskForm() {
             />
 
             <input
-                placeholder="Category"
+                placeholder="Category (e.g. school, work)"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
             />
