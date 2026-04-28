@@ -32,7 +32,7 @@ export default async function HomePage() {
 
   todaysTasks.sort((a, b) => {
     if (a.completed !== b.completed) {
-      return a.completed ? 1 : -1;
+      return (a.completed ?? false) ? 1 : -1;
     }
 
     return new Date(a.deadline).getTime() -
