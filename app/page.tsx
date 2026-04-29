@@ -1,43 +1,63 @@
+"use client";
+
+import {useEffect, useState, useMemo} from "react";
 import TaskPreview from "@/components/TaskPreview";
 import { TaskProps } from "@/types";
-import clientPromise from "@/lib/mongodb";
 import TaskForm from "@/components/TaskForm";
 import Nav from "../components/Nav";
 
-export default async function HomePage() {
-  const client = await clientPromise;
-  const db = client.db("taskmanager");
+export default function HomePage() {
+  const [tasks, setTasks] = useState<TaskProps[]>([]);
+  const [activeTask, setActiveTask] = useState<TaskProps | null>(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
-  const tasksRaw = await db
-      .collection("tasks")
-      .find({ isDeleted: { $ne: true } })
-      .toArray();
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const res = await fetch("/api/tasks");
+      const data = await res.json();
+      setTasks(data);
+    };
 
-  const tasks: TaskProps[] = tasksRaw.map((task) => ({
-    _id: task._id.toString(),
-    title: task.title,
-    category: task.category,
-    description: task.description,
-    completed: task.completed,
-    deadline: task.deadline,
-    deleted: task.deleted
-  }));
+    fetchTasks();
+  }, []);
 
-  const today = new Date();
+  const handleDeleteTask = async (task: TaskProps) => {
+    await fetch(`/api/tasks/${task._id}`, { method: "DELETE" });
 
-  const todaysTasks = tasks.filter((task) => {
-    const d = new Date(task.deadline);
-    return d.toDateString() === today.toDateString();
-  });
+    setTasks((prev) => prev.filter((t) => t._id !== task._id));
+    setActiveTask(null);
+    setConfirmingDelete(false);
+  };
 
-  todaysTasks.sort((a, b) => {
-    if (a.completed !== b.completed) {
-      return (a.completed ?? false) ? 1 : -1;
-    }
+  const handleDeleteClick = (task: TaskProps) => {
+    setActiveTask(task);
+    setConfirmingDelete(true);
+  };
 
-    return new Date(a.deadline).getTime() -
-        new Date(b.deadline).getTime();
-  });
+  const closeModal = () => {
+    setActiveTask(null);
+    setConfirmingDelete(false);
+  };
+
+  const todaysTasks = useMemo(() => {
+    const today = new Date();
+
+    return tasks
+        .filter((task) => {
+          const d = new Date(task.deadline);
+          return d.toDateString() === today.toDateString();
+        })
+        .sort((a, b) => {
+          if (a.completed !== b.completed) {
+            return a.completed ? 1 : -1;
+          }
+
+          return (
+              new Date(a.deadline).getTime() -
+              new Date(b.deadline).getTime()
+          );
+        });
+  }, [tasks]);
 
   return (
       <div>
@@ -49,9 +69,32 @@ export default async function HomePage() {
               <p>No tasks for today.</p>
           ) : (
               todaysTasks.map((task) => (
-                  <TaskPreview key={task._id} task={task} />
+                  <TaskPreview
+                      key={task._id}
+                      task={task}
+                      onDeleteClick={handleDeleteClick}
+                  />
               ))
           )}
+        {confirmingDelete && activeTask && (
+            <div>
+              <div>
+                <p>
+                  Are you sure you want to delete{" "}
+                  <strong>{activeTask.title}</strong>?
+                </p>
+
+                <button
+                    onClick={() => activeTask && handleDeleteTask(activeTask)}
+                    style={{ marginRight: "10px" }}
+                >
+                  Yes, Delete
+                </button>
+
+                <button onClick={closeModal}>Cancel</button>
+              </div>
+            </div>
+        )}
       </div>
   );
 }

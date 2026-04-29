@@ -59,7 +59,11 @@ const StyledMain = styled.div<{ $completed: boolean }>`
     }
 `;
 
-export default function TaskPreview({ task }: { task: TaskProps }) {
+type Props = {
+    task: TaskProps;
+    onDeleteClick: (task: TaskProps) => void;
+}
+export default function TaskPreview({ task, onDeleteClick }: Props) {
 
     const toggleComplete = async () => {
         await fetch(`/api/tasks/${task._id}`, {
@@ -70,18 +74,6 @@ export default function TaskPreview({ task }: { task: TaskProps }) {
                 completed: !task.completed,
             }),
         });
-
-        window.location.reload();
-    };
-
-    const deleteTask = async () => {
-        console.log("DELETE CLICKED", task._id);
-
-        const res = await fetch(`/api/tasks/${task._id}`, {
-            method: "DELETE",
-        });
-
-        console.log("DELETE RESPONSE:", res.status);
 
         window.location.reload();
     };
@@ -99,7 +91,6 @@ export default function TaskPreview({ task }: { task: TaskProps }) {
             }),
         });
 
-        window.location.reload();
     };
 
     return (
@@ -118,10 +109,9 @@ export default function TaskPreview({ task }: { task: TaskProps }) {
                 {new Date(task.deadline).toLocaleDateString()}
             </h4>
 
-            {/* ✅ NEW BUTTONS */}
             <div id="Buttons">
                 <button onClick={editTask}>Edit</button>
-                <button onClick={deleteTask}>Delete</button>
+                <button onClick={() => onDeleteClick(task)}> Delete </button>
             </div>
         </StyledMain>
     );

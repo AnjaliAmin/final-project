@@ -20,7 +20,7 @@ export default function Nav() {
     return (
         <StyledNav>
             <StyledLink href="/">Home</StyledLink>
-            <StyledLink href="/tasks">Tasks</StyledLink>
+            <StyledLink href="/taskList">Tasks</StyledLink>
             <StyledLink href="/calendar">Calendar</StyledLink>
         </StyledNav>
     );
