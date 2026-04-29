@@ -83,6 +83,59 @@ const TaskChip = styled.div<{ $completed: boolean }>`
     text-overflow: ellipsis;
     text-decoration: ${({ $completed }) => ($completed ? "line-through" : "none")};
     color: ${({ $completed }) => ($completed ? "#888" : "black")};
+    cursor: pointer;
+    &:hover { background: #e0e0e0; }
+`;
+
+const Overlay = styled.div`
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+`;
+
+const Modal = styled.div`
+    background: white;
+    border: 2px solid black;
+    padding: 1.5rem 2rem;
+    min-width: 300px;
+    max-width: 480px;
+    width: 90%;
+    color: black;
+`;
+
+const ModalTitle = styled.h2`
+    margin: 0 0 0.75rem;
+    border-bottom: 1px solid black;
+    padding-bottom: 0.5rem;
+`;
+
+const ModalRow = styled.p`
+    margin: 0.4rem 0;
+`;
+
+const ModalButtons = styled.div`
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    justify-content: flex-end;
+`;
+
+const DeleteButton = styled.button`
+    background: #c0392b;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    cursor: pointer;
+    &:hover { background: #a93226; }
+`;
+
+const CloseButton = styled.button`
+    padding: 6px 14px;
+    cursor: pointer;
 `;
 
 const MoreTasks = styled.div`
@@ -118,6 +171,8 @@ const TaskDetailItem = styled.div<{ $completed: boolean }>`
 
 export default function CalendarPage() {
     const [tasks, setTasks] = useState<TaskProps[]>([]);
+    const [activeTask, setActiveTask] = useState<TaskProps | null>(null);
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
     const today = new Date();
     const [year, setYear] = useState(today.getFullYear());
     const [month, setMonth] = useState(today.getMonth());
@@ -129,11 +184,23 @@ export default function CalendarPage() {
             .then(setTasks);
     }, []);
 
+    const handleDeleteTask = async (task: TaskProps) => {
+        await fetch(`/api/tasks/${task._id}`, { method: "DELETE" });
+        setTasks((prev) => prev.filter((t) => t._id !== task._id));
+        setActiveTask(null);
+        setConfirmingDelete(false);
+    };
+
+    const closeModal = () => {
+        setActiveTask(null);
+        setConfirmingDelete(false);
+    };
+
     const tasksByDate = useMemo(() => {
         const map: Record<string, TaskProps[]> = {};
         for (const task of tasks) {
             const d = new Date(task.deadline);
-            const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+            const key = `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`;
             if (!map[key]) map[key] = [];
             map[key].push(task);
         }
@@ -168,6 +235,7 @@ export default function CalendarPage() {
             : [];
 
     return (
+        <>
         <Wrapper>
             <Nav />
             <PageHeader>Calendar</PageHeader>
@@ -197,7 +265,11 @@ export default function CalendarPage() {
                         >
                             <DayNumber $isToday={isToday}>{day}</DayNumber>
                             {dayTasks.slice(0, 3).map((t) => (
-                                <TaskChip key={t._id} $completed={t.completed}>
+                                <TaskChip
+                                    key={t._id}
+                                    $completed={t.completed}
+                                    onClick={(e) => { e.stopPropagation(); setActiveTask(t); }}
+                                >
                                     {t.title}
                                 </TaskChip>
                             ))}
@@ -217,7 +289,12 @@ export default function CalendarPage() {
                         <p>No tasks for this day.</p>
                     ) : (
                         selectedTasks.map((t) => (
-                            <TaskDetailItem key={t._id} $completed={t.completed}>
+                            <TaskDetailItem
+                                key={t._id}
+                                $completed={t.completed}
+                                onClick={() => setActiveTask(t)}
+                                style={{ cursor: "pointer" }}
+                            >
                                 <strong>{t.title}</strong>
                                 {t.category && <span> · {t.category}</span>}
                                 {t.description && <p>{t.description}</p>}
@@ -227,5 +304,33 @@ export default function CalendarPage() {
                 </DayDetail>
             )}
         </Wrapper>
+        {activeTask && (
+            <Overlay onClick={closeModal}>
+                <Modal onClick={(e) => e.stopPropagation()}>
+                    <ModalTitle>{activeTask.title}</ModalTitle>
+                    {activeTask.category && <ModalRow><strong>Category:</strong> {activeTask.category}</ModalRow>}
+                    {activeTask.description && <ModalRow><strong>Description:</strong> {activeTask.description}</ModalRow>}
+                    <ModalRow>
+                        <strong>Due:</strong> {new Date(activeTask.deadline).toLocaleDateString("en-US", { timeZone: "UTC" })}
+                    </ModalRow>
+                    <ModalRow><strong>Status:</strong> {activeTask.completed ? "Completed" : "Pending"}</ModalRow>
+                    {confirmingDelete ? (
+                        <>
+                            <ModalRow style={{ marginTop: "1rem" }}><strong>Are you sure you want to delete this task?</strong></ModalRow>
+                            <ModalButtons>
+                                <CloseButton onClick={() => setConfirmingDelete(false)}>Cancel</CloseButton>
+                                <DeleteButton onClick={() => handleDeleteTask(activeTask)}>Yes, Delete</DeleteButton>
+                            </ModalButtons>
+                        </>
+                    ) : (
+                        <ModalButtons>
+                            <CloseButton onClick={closeModal}>Close</CloseButton>
+                            <DeleteButton onClick={() => setConfirmingDelete(true)}>Delete</DeleteButton>
+                        </ModalButtons>
+                    )}
+                </Modal>
+            </Overlay>
+        )}
+        </>
     );
 }
