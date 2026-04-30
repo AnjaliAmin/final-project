@@ -5,9 +5,10 @@ const StyledNav = styled.nav`
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    border-bottom: 3px solid black;
+    border-bottom: 3px solid darkblue;
     font-family: "Arial, Helvetica, sans-serif";
     font-size: calc(15px + 2vw);
+    background-color: lightyellow;
 `;
 
 const StyledLink = styled(Link)`
@@ -15,6 +16,7 @@ const StyledLink = styled(Link)`
     font-size: calc(15px + 2vw);
     text-align: center;
     padding: 5px;
+    color: darkblue;
 `;
 export default function Nav() {
     return (

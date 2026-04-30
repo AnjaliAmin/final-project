@@ -12,10 +12,15 @@ const MONTH_NAMES = [
 
 const Wrapper = styled.div`
     font-family: "Arial, Helvetica, sans-serif";
+    background-color: azure;
 `;
 
 const PageHeader = styled.h1`
+    font-size: calc(20px + 1.5vw);
     text-align: center;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    color: darkblue;
 `;
 
 const Controls = styled.div`
@@ -48,6 +53,7 @@ const DayHeader = styled.div`
     font-weight: bold;
     padding: 6px 0;
     border: 1px solid black;
+    background-color: lavender;
 `;
 
 const DayCell = styled.div<{ $isToday: boolean; $isSelected: boolean }>`
@@ -80,6 +86,7 @@ const TaskChip = styled.div<{ $completed: boolean }>`
     margin-bottom: 2px;
     white-space: nowrap;
     overflow: hidden;
+    background-color: lavender;
     text-overflow: ellipsis;
     text-decoration: ${({ $completed }) => ($completed ? "line-through" : "none")};
     color: ${({ $completed }) => ($completed ? "#888" : "black")};
@@ -95,6 +102,7 @@ const Overlay = styled.div`
     align-items: center;
     justify-content: center;
     z-index: 100;
+    font-family: "Arial, Helvetica, sans-serif";
 `;
 
 const Modal = styled.div`
@@ -125,12 +133,12 @@ const ModalButtons = styled.div`
 `;
 
 const DeleteButton = styled.button`
-    background: #c0392b;
+    background: darkblue;
     color: white;
     border: none;
     padding: 6px 14px;
     cursor: pointer;
-    &:hover { background: #a93226; }
+    &:hover { background: lightblue; }
 `;
 
 const CloseButton = styled.button`
@@ -238,7 +246,7 @@ export default function CalendarPage() {
         <>
         <Wrapper>
             <Nav />
-            <PageHeader>Calendar</PageHeader>
+            <PageHeader><strong>Calendar</strong></PageHeader>
             <Controls>
                 <NavButton onClick={prevMonth}>&#8592;</NavButton>
                 <MonthTitle>{MONTH_NAMES[month]} {year}</MonthTitle>

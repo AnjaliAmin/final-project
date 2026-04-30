@@ -14,23 +14,23 @@ export const getAllTasks = async () => {
     return col.find({ isDeleted: { $ne: true } }).toArray();
 };
 
-export const getTasksByDate = async (date: Date) => {
+export const getTasksByDate = async (date: string) => {
     const col = await getCollection();
 
-    const start = new Date(date);
-    start.setHours(0,0,0,0);
-
-    const end = new Date(date);
-    end.setHours(23,59,59,999);
-
     return col.find({
-        deadline: { $gte: start, $lte: end },
+        deadline: date,
         isDeleted: { $ne: true }
     }).toArray();
 };
 
-export const createTask = async (task: any) => {
+export const createTask = async (task: {
+    title: string;
+    description: string;
+    category: string;
+    deadline: string;
+}) => {
     const col = await getCollection();
+
     return col.insertOne({
         ...task,
         completed: false,

@@ -4,28 +4,72 @@ import Nav from "../../components/Nav";
 import { useEffect, useState, useMemo } from "react";
 import TaskPreview from "@/components/TaskPreview";
 import { TaskProps } from "@/types";
+import TaskForm from "@/components/TaskForm";
 
 const StyledWrapper = styled.div`
     font-family: "Arial, Helvetica, sans-serif";
+    background-color: azure;
+    height: 100vh;
 `;
 
 const StyledHeader = styled.header`
     font-size: calc(20px + 1.5vw);
     text-align: center;
     padding-top: 1%;
+    padding-bottom: 1%;
+    color: darkblue;
 `;
 
 const StyledMain = styled.main`
-    padding: 2%;
-    padding-top: 0;
+    padding-inline: 5%;
+    margin: 4%;
 `;
 
 const StyledDiv = styled.div`
-    padding: 2%;
+    padding-top: 1%;
     font-size: calc(10px + 1.5vw);
     text-align: center;
+    color: darkblue;
 `;
 
+const Overlay = styled.div`
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    font-family: "Arial, Helvetica, sans-serif";
+`;
+
+const Modal = styled.div`
+    background: white;
+    border: 2px solid black;
+    padding: 1.5rem 2rem;
+    min-width: 300px;
+    max-width: 480px;
+    width: 90%;
+    color: black;
+    font-size: calc(10px + 1.5vw);
+`;
+
+const ModalButtons = styled.div`
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    font-size: calc(5px + 1.5vw);
+    
+    #Delete {
+      background: darkblue;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      cursor: pointer;
+      &:hover { background: lightblue; }
+    }
+`;
 
 export default function TasksPage() {
     const [tasks, setTasks] = useState<TaskProps[]>([]);
@@ -85,8 +129,9 @@ export default function TasksPage() {
     return (
         <StyledWrapper>
             <Nav/>
-            <StyledHeader>Tasks</StyledHeader>
             <StyledMain>
+                <TaskForm/>
+                <StyledHeader><strong>Tasks</strong></StyledHeader>
                 <StyledDiv>
                     <select
                         value={category}
@@ -113,16 +158,24 @@ export default function TasksPage() {
                 )}
             </StyledMain>
             {confirmingDelete && activeTask && (
-                <>
-                    <p>
-                    Are you sure you want to delete: {activeTask.title}
-                    </p>
+                <Overlay onClick={closeModal}>
+                    <Modal onClick={(e) => e.stopPropagation()}>
+                        <p>
+                            Are you sure you want to delete{" "}
+                            <strong>{activeTask.title}</strong>?
+                        </p>
 
-                    <button onClick={() => handleDeleteTask(activeTask)}>
-                        Yes, Delete
-                    </button>
-                    <button onClick={closeModal}> Cancel </button>
-                </>
+                        <ModalButtons>
+                            <button onClick={closeModal}>Cancel</button>
+
+                            <button id="Delete"
+                                    onClick={() => handleDeleteTask(activeTask)}
+                            >
+                                Yes, Delete
+                            </button>
+                        </ModalButtons>
+                    </Modal>
+                </Overlay>
             )}
         </StyledWrapper>
     );

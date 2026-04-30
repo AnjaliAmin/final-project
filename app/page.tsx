@@ -5,6 +5,65 @@ import TaskPreview from "@/components/TaskPreview";
 import { TaskProps } from "@/types";
 import TaskForm from "@/components/TaskForm";
 import Nav from "../components/Nav";
+import styled from "styled-components";
+
+const StyledWrapper = styled.div`
+    font-family: "Arial, Helvetica, sans-serif";
+    background-color: azure;
+    height: 100vh;    
+`;
+
+const StyledHeader = styled.header`
+    font-size: calc(20px + 1.5vw);
+    text-align: center;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    color: darkblue;
+`;
+
+const StyledMain = styled.main`
+    padding-inline: 5%;
+    margin: 4%;
+`;
+
+const Overlay = styled.div`
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    font-family: "Arial, Helvetica, sans-serif";
+`;
+
+const Modal = styled.div`
+    background: white;
+    border: 2px solid black;
+    padding: 1.5rem 2rem;
+    min-width: 300px;
+    max-width: 480px;
+    width: 90%;
+    color: black;
+    font-size: calc(10px + 1.5vw);
+`;
+
+const ModalButtons = styled.div`
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    font-size: calc(5px + 1.5vw);
+    
+    #Delete {
+      background: darkblue;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      cursor: pointer;
+      &:hover { background: lightblue; }
+    }
+`;
 
 export default function HomePage() {
   const [tasks, setTasks] = useState<TaskProps[]>([]);
@@ -39,31 +98,27 @@ export default function HomePage() {
     setConfirmingDelete(false);
   };
 
+  const todayString = new Date().toLocaleDateString("en-CA");
+
   const todaysTasks = useMemo(() => {
-    const today = new Date();
 
     return tasks
-        .filter((task) => {
-          const d = new Date(task.deadline);
-          return d.toDateString() === today.toDateString();
-        })
+        .filter((task) => task.deadline === todayString)
         .sort((a, b) => {
           if (a.completed !== b.completed) {
             return a.completed ? 1 : -1;
           }
 
-          return (
-              new Date(a.deadline).getTime() -
-              new Date(b.deadline).getTime()
-          );
+          return a.deadline.localeCompare(b.deadline);
         });
-  }, [tasks]);
+  }, [tasks, todayString]);
 
   return (
-      <div>
+      <StyledWrapper>
         <Nav/>
-          <TaskForm />
-          <h1>Today’s Tasks</h1>
+        <StyledMain>
+          <TaskForm/>
+          <StyledHeader><strong>Today’s Tasks</strong></StyledHeader>
 
           {todaysTasks.length === 0 ? (
               <p>No tasks for today.</p>
@@ -76,25 +131,28 @@ export default function HomePage() {
                   />
               ))
           )}
+
         {confirmingDelete && activeTask && (
-            <div>
-              <div>
+            <Overlay onClick={closeModal}>
+              <Modal onClick={(e) => e.stopPropagation()}>
                 <p>
                   Are you sure you want to delete{" "}
                   <strong>{activeTask.title}</strong>?
                 </p>
 
-                <button
-                    onClick={() => activeTask && handleDeleteTask(activeTask)}
-                    style={{ marginRight: "10px" }}
-                >
-                  Yes, Delete
-                </button>
+                <ModalButtons>
+                  <button onClick={closeModal}>Cancel</button>
 
-                <button onClick={closeModal}>Cancel</button>
-              </div>
-            </div>
+                  <button id="Delete"
+                      onClick={() => handleDeleteTask(activeTask)}
+                  >
+                    Yes, Delete
+                  </button>
+                </ModalButtons>
+              </Modal>
+            </Overlay>
         )}
-      </div>
+        </StyledMain>
+      </StyledWrapper>
   );
 }

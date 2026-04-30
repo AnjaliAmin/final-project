@@ -4,6 +4,6 @@ export type TaskProps = {
     category: string;
     completed: boolean;
     description: string;
-    deadline: Date;
+    deadline: string;
     deleted: boolean;
 }

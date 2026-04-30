@@ -7,7 +7,15 @@ export async function GET() {
 
     const tasks = await db.collection("tasks").find().toArray();
 
-    return NextResponse.json(tasks);
+    const formattedTasks = tasks.map((task) => ({
+        ...task,
+        _id: task._id.toString(),
+        deadline: task.deadline
+            ? new Date(task.deadline).toISOString().split("T")[0]
+            : null,
+    }));
+
+    return NextResponse.json(formattedTasks);
 }
 
 export async function POST(req: Request) {
