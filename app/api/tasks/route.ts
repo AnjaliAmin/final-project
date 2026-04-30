@@ -1,6 +1,9 @@
+// program to handle task functions like fetching and creating tasks
+
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 
+// function that gets and sorts tasks
 export async function GET() {
     const client = await clientPromise;
     const db = client.db("taskmanager");
@@ -18,6 +21,7 @@ export async function GET() {
     return NextResponse.json(formattedTasks);
 }
 
+// function that creates new tasks
 export async function POST(req: Request) {
     const body = await req.json();
 

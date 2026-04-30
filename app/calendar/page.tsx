@@ -1,3 +1,8 @@
+// program to display calendar page
+/* displays all tasks in calendar view,
+ tasks can be clicked to view and edit */
+// Alex's component
+
 "use client";
 import { useEffect, useState, useMemo } from "react";
 import styled from "styled-components";
@@ -10,6 +15,7 @@ const MONTH_NAMES = [
     "July", "August", "September", "October", "November", "December",
 ];
 
+// styling
 const Wrapper = styled.div`
     font-family: "Arial, Helvetica, sans-serif";
     background-color: azure;
@@ -177,6 +183,7 @@ const TaskDetailItem = styled.div<{ $completed: boolean }>`
     }
 `;
 
+// function to display tasks on a calendar
 export default function CalendarPage() {
     const [tasks, setTasks] = useState<TaskProps[]>([]);
     const [activeTask, setActiveTask] = useState<TaskProps | null>(null);

@@ -1,3 +1,5 @@
+// Format for task items
+
 export type TaskProps = {
     _id: string;
     title: string;

@@ -1,3 +1,7 @@
+// program to display home page
+// displays all of today's tasks, completed or active
+// Sarah's component
+
 "use client";
 
 import {useEffect, useState, useMemo} from "react";
@@ -7,6 +11,7 @@ import TaskForm from "@/components/TaskForm";
 import Nav from "../components/Nav";
 import styled from "styled-components";
 
+// styling
 const StyledWrapper = styled.div`
     font-family: "Arial, Helvetica, sans-serif";
     background-color: azure;
@@ -65,6 +70,7 @@ const ModalButtons = styled.div`
     }
 `;
 
+// function to create and display home page
 export default function HomePage() {
   const [tasks, setTasks] = useState<TaskProps[]>([]);
   const [activeTask, setActiveTask] = useState<TaskProps | null>(null);

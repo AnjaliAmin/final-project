@@ -1,6 +1,9 @@
+// component for navigation bar
+
 import Link from "next/link";
 import styled from "styled-components";
 
+// styling
 const StyledNav = styled.nav`
     display: flex;
     flex-direction: row;
@@ -18,6 +21,8 @@ const StyledLink = styled(Link)`
     padding: 5px;
     color: darkblue;
 `;
+
+// nav bar function
 export default function Nav() {
     return (
         <StyledNav>

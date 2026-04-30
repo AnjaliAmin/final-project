@@ -1,3 +1,9 @@
+// program to display tasks page
+/* displays all tasks as a list, sorted by earliest date,
+with completed tasks at bottom, and ability to filter tasks by category
+*/
+// Anjali's component
+
 "use client";
 import styled from "styled-components";
 import Nav from "../../components/Nav";
@@ -6,6 +12,7 @@ import TaskPreview from "@/components/TaskPreview";
 import { TaskProps } from "@/types";
 import TaskForm from "@/components/TaskForm";
 
+// styling
 const StyledWrapper = styled.div`
     font-family: "Arial, Helvetica, sans-serif";
     background-color: azure;
@@ -71,6 +78,7 @@ const ModalButtons = styled.div`
     }
 `;
 
+// function to create and display tasks page
 export default function TasksPage() {
     const [tasks, setTasks] = useState<TaskProps[]>([]);
     const [category, setCategory] = useState<string>("All");

@@ -1,8 +1,12 @@
+//program that creates new tasks
+// located on top of home and tasks page
+
 "use client";
 
 import styled from "styled-components";
 import { useState } from "react";
 
+// styling
 const StyledWrapper = styled.div`
     display: flex;
     flex-direction: column;
@@ -49,6 +53,7 @@ type TaskFormProps = {
     onTaskCreated?: () => void;
 };
 
+// form to create new tasks and frontend display
 export default function TaskForm({onTaskCreated}: TaskFormProps) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");

@@ -1,8 +1,11 @@
+// program that handles how tasks are displayed
+
 "use client";
 
 import { TaskProps } from "@/types";
 import styled from "styled-components";
 
+// styling
 const StyledMain = styled.div<{ $completed: boolean }>`
     display: flex;
     flex-direction: column;
@@ -88,6 +91,7 @@ type Props = {
     onDeleteClick: (task: TaskProps) => void;
 }
 
+// function that makes task item displayable
 export default function TaskPreview({ task, onDeleteClick }: Props) {
 
     const toggleComplete = async () => {
